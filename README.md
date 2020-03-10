@@ -1,2 +1,9 @@
-# erl-eosio
-Erlang eosin
+frame
+=====
+
+An OTP application
+
+Build
+-----
+
+    $ rebar3 compile
