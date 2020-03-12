@@ -16,8 +16,14 @@
 
 routing(Path, DataIn) ->
     case Path of
-        <<"/create_key">> ->
-            web_callback:create_key();
+        <<"/create_account">> ->
+            web_callback:create_account(DataIn);
+        <<"/get_account">> ->
+            web_callback:get_account(DataIn);
+        <<"/transfer">> ->
+            web_callback:transfer(DataIn);
+        <<"/get_currency">> ->
+            web_callback:get_currency(DataIn);
         _ ->
             other()
     end.

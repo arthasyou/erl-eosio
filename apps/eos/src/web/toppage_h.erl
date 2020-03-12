@@ -72,7 +72,7 @@ html(Req, State) ->
 json(Req, State) ->
     Path = cowboy_req:path(Req),
     {ok, RawBody, _Req1} = cowboy_req:read_body(Req),
-    DataIn = jsx:decode(RawBody),
+    DataIn = jsx:decode(RawBody, [return_maps]),
     Jsx = web_routes:routing(Path, DataIn),
     DataOut = jsx:encode(Jsx),
     cowboy_req:reply(200, #{
