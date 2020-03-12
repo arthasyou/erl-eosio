@@ -49,7 +49,7 @@ code_change(_OldVsn, State, _Extra) ->
 %% ====================================================================
 
 do_check_data(Data)->
-	lager:info("~p~n", [Data]),
+%%	lager:info("~p~n", [Data]),
     #{
         <<"transactions">> := Data1
     } = Data,

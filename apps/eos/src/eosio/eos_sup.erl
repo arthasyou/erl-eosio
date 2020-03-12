@@ -40,6 +40,7 @@ start_link() ->
 %%%===================================================================
 
 init([]) ->
+    init_eosio(),
     SupFlags = #{strategy => one_for_one, intensity => 10, period => 10},
     EDDW = #{
         id => eos_do_data_work,
@@ -63,5 +64,11 @@ init([]) ->
 %%%===================================================================
 %%% Internal functions
 %%%===================================================================
+
+init_eosio() ->
+    {ok, List} = application:get_env(eos, eosio),
+    lists:foreach(fun({Key, Val}) ->
+        recorder:init(Key, Val)
+    end, List).
 
 

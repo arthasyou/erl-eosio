@@ -31,6 +31,8 @@ start_link() ->
 %% Before OTP 18 tuples must be used to specify a child. e.g.
 %% Child :: {Id,StartFunc,Restart,Shutdown,Type,Modules}
 init([]) ->
+    recorder:create(),
+    counter:create(),
     SupFlags = #{strategy => one_for_one, intensity => 10, period => 10},
 
     DbSup = #{
@@ -57,7 +59,7 @@ init([]) ->
         type => supervisor,
         modules => [eos_url_sup]
     },
-    ChildSpecs = [EosSup, EosUrlSup, DbSup],
+    ChildSpecs = [EosSup, DbSup],
     {ok, {SupFlags, ChildSpecs}}.
 
 %%====================================================================
