@@ -15,6 +15,7 @@
 -export([wallet_unlock/0]).
 -export([get_account/1, create_account/1]).
 -export([transfer/4, get_currency/2]).
+-export([delegate_bw/3, un_delegate_bw/3]).
 
 
 wallet_unlock() ->
@@ -38,20 +39,36 @@ create_account(Account) ->
 
 transfer(From, To, Quantity, Memo) ->
     Url = recorder:lookup(eos_url),
-    Account = recorder:lookup(eos_main_account),
+    Contract = recorder:lookup(eos_contract),
     Chars = io_lib:format("cleos -u ~p push action ~p transfer '[ ~p, ~p, ~p, ~p ]' -p ",
-        [Url, Account, From, To, Quantity, Memo]),
+        [Url, Contract, From, To, Quantity, Memo]),
     Cmd = lists:flatten(Chars)++From++"@active -j",
     wallet_unlock(),
     e_port:exec_json(Cmd).
 
 get_currency(Account, Symbol) ->
     Url = recorder:lookup(eos_url),
-    Contract = recorder:lookup(eos_main_account),
+    Contract = recorder:lookup(eos_contract),
     Cmd = lists:concat(["cleos -u ", Url, " get currency balance ", Contract, " ", Account, " ", Symbol, " -j"]),
     e_port:exec_json(Cmd).
 
+delegate_bw(Account, Cpu, Net) ->
+    Url = recorder:lookup(eos_url),
+    MainAccount = recorder:lookup(eos_main_account),
+    Str = lists:concat(["cleos -u ", Url, " system delegatebw ", MainAccount, " ", Account, " ~p ~p"]),
+    Chars = io_lib:format(Str, [Net, Cpu]),
+    Cmd = lists:flatten(Chars)++" -j",
+    wallet_unlock(),
+    e_port:exec_json(Cmd).
 
+un_delegate_bw(Account, Cpu, Net) ->
+    Url = recorder:lookup(eos_url),
+    MainAccount = recorder:lookup(eos_main_account),
+    Str = lists:concat(["cleos -u ", Url, " system undelegatebw ", MainAccount, " ", Account, " ~p ~p"]),
+    Chars = io_lib:format(Str, [Net, Cpu]),
+    Cmd = lists:flatten(Chars)++" -j",
+    wallet_unlock(),
+    e_port:exec_json(Cmd).
 
 
 

@@ -14,6 +14,7 @@
 %% ==================================================
 -export([create_account/1, get_account/1]).
 -export([transfer/1, get_currency/1]).
+-export([delegate_bw/1, un_delegate_bw/1]).
 
 create_account(DataIn) ->
     lager:info("data:~p~n", [DataIn]),
@@ -56,6 +57,32 @@ get_currency(DataIn) ->
         <<"symbol">> := Symbol
     } = DataIn,
     case eosio:get_currency(binary_to_list(Account), binary_to_list(Symbol)) of
+        error ->
+            #{flag => fail, reason => <<"sys_err">>};
+        Data ->
+            #{flag => success, data => Data}
+    end.
+
+delegate_bw(DataIn) ->
+    #{
+        <<"account">> := Account,
+        <<"cpu">> := Cpu,
+        <<"net">> := Net
+    } = DataIn,
+    case eosio:delegate_bw(binary_to_list(Account), binary_to_list(Cpu), binary_to_list(Net)) of
+        error ->
+            #{flag => fail, reason => <<"sys_err">>};
+        Data ->
+            #{flag => success, data => Data}
+    end.
+
+un_delegate_bw(DataIn) ->
+    #{
+        <<"account">> := Account,
+        <<"cpu">> := Cpu,
+        <<"net">> := Net
+    } = DataIn,
+    case eosio:un_delegate_bw(binary_to_list(Account), binary_to_list(Cpu), binary_to_list(Net)) of
         error ->
             #{flag => fail, reason => <<"sys_err">>};
         Data ->

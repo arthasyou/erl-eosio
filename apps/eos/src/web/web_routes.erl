@@ -24,6 +24,10 @@ routing(Path, DataIn) ->
             web_callback:transfer(DataIn);
         <<"/get_currency">> ->
             web_callback:get_currency(DataIn);
+        <<"/delegate_bw">> ->
+            web_callback:delegate_bw(DataIn);
+        <<"/un_delegate_bw">> ->
+            web_callback:un_delegate_bw(DataIn);
         _ ->
             other()
     end.
