@@ -71,6 +71,7 @@
 
     {eosio, [
       {eos_wallet_key, "PW5KF5renkSD2RuqG2FiDxnq9n3PmqRzAQntJWAKWYoxee8yvqFkD"},
+      {eos_contract, "ancient55555"},
       {eos_main_account, "ancient55555"},
       {eos_public_key, "EOS5YHyucDzKf2U5oPafGWBYBSR5ZTPLnnaNmdjj6nhnV324asP7u"},
       {eos_url, "http://jungle2.cryptolions.io:8888"}

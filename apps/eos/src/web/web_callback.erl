@@ -16,6 +16,7 @@
 -export([transfer/1, get_currency/1]).
 
 create_account(DataIn) ->
+    lager:info("data:~p~n", [DataIn]),
     #{<<"account">> := Account} = DataIn,
     case eosio:create_account(binary_to_list(Account)) of
         error ->
