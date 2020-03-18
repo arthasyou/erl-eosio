@@ -16,6 +16,6 @@ logs
 _build
 .idea
 *.iml
-config/sysconfig
+config/sys.config
 rebar3.crashdump
 *~
