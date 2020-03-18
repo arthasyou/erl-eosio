@@ -4,9 +4,9 @@
 %%% @doc
 %%%
 %%% @end
-%%% Created : 15. Oct 2019 16:51
+%%% Created : 10. Oct 2019 16:56
 %%%-------------------------------------------------------------------
--module(db_sup).
+-module(eos_sup).
 -author("ysx").
 
 -behaviour(supervisor).
@@ -25,6 +25,14 @@
 
 %%--------------------------------------------------------------------
 start_link() ->
+    case ets:info('monitor_symbol_eos') of
+        undefined -> ets:new('monitor_symbol_eos',[set,public,named_table,{keypos,2}]);
+        _ -> nil
+    end,
+    case ets:info('eos_work_id_to_pid') of
+        undefined -> ets:new('eos_work_id_to_pid',[set,public,named_table,{keypos,1}]);
+        _ -> nil
+    end,
     supervisor:start_link({local, ?SERVER}, ?MODULE, []).
 
 %%%===================================================================
@@ -32,19 +40,19 @@ start_link() ->
 %%%===================================================================
 
 init([]) ->
-    {ok, Pools} = application:get_env(eos, pools),
-    PoolSpecs = lists:map(fun({Name, PoolArgs, WorkerArgs}) ->
-        poolboy:child_spec(Name, PoolArgs, WorkerArgs)
-                          end, Pools),
-
-    SupFlags = #{strategy => one_for_all, intensity => 5, period => 10},
-
-    ChildSpecs = PoolSpecs,
+    init_eosio(),
+    SupFlags = #{strategy => one_for_one, intensity => 10, period => 10},
+    ChildSpecs = [],
     {ok, {SupFlags, ChildSpecs}}.
 
 %%%===================================================================
 %%% Internal functions
 %%%===================================================================
 
+init_eosio() ->
+    {ok, List} = application:get_env(eos, eosio),
+    lists:foreach(fun({Key, Val}) ->
+        recorder:init(Key, Val)
+    end, List).
 
 
