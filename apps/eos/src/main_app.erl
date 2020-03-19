@@ -15,15 +15,7 @@
 %%====================================================================
 
 start(_StartType, _StartArgs) ->
-%%    db:start(),
-    Dispatch = cowboy_router:compile([
-        {'_', [
-            {"/[...]", toppage_h, []}
-        ]}
-    ]),
-    {ok, _} = cowboy:start_clear(http, [{port, 18080}], #{
-        env => #{dispatch => Dispatch}
-    }),
+    web:start(),
     main_sup:start_link().
 
 

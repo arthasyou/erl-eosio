@@ -19,9 +19,26 @@
 
 
 wallet_unlock() ->
-    Key = recorder:lookup(eos_wallet_key),
-    Cmd = "cleos wallet unlock --password " ++ Key,
+    case wallet_list() of
+        {0, Str} ->
+            case lists:member($*, Str) of
+                true ->
+                    locked;
+                false ->
+                    Key = recorder:lookup(eos_wallet_key),
+                    Cmd = "cleos wallet unlock --password " ++ Key,
+                    e_port:exec(Cmd)
+            end;
+        {1, Err} ->
+            Err
+    end.
+
+
+wallet_list() ->
+    Cmd = "cleos wallet list",
     e_port:exec(Cmd).
+
+
 
 get_account(Account) ->
     Url = recorder:lookup(eos_url),
