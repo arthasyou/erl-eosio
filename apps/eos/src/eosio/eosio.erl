@@ -13,8 +13,8 @@
 %% API
 %% ==================================================
 -export([wallet_unlock/0]).
--export([get_account/1, create_account/1]).
--export([transfer/4, get_currency/2]).
+-export([get_account/1, create_account/1, create_account_with_public_key/2]).
+-export([transfer/5, get_currency/2]).
 -export([delegate_bw/3, un_delegate_bw/3]).
 
 
@@ -49,17 +49,34 @@ create_account(Account) ->
     Url = recorder:lookup(eos_url),
     PublicKey = recorder:lookup(eos_public_key),
     Creator = recorder:lookup(eos_main_account),
-    Cmd = lists:concat(["cleos -u ", Url, " system newaccount --stake-net '0 EOS' --stake-cpu '0 EOS' --buy-ram-kbytes 3 ",
+    Cmd = lists:concat(["cleos -u ", Url, " system newaccount --stake-net '0 EOS' --stake-cpu '0 EOS' --buy-ram-kbytes 4 ",
         Creator, " ", Account, " ", PublicKey, " ", PublicKey, " -j"]),
     wallet_unlock(),
     e_port:exec_json(Cmd).
 
-transfer(From, To, Quantity, Memo) ->
+create_account_with_public_key(Account, PublicKey) ->
     Url = recorder:lookup(eos_url),
-    Contract = recorder:lookup(eos_contract),
-    Chars = io_lib:format("cleos -u ~p push action ~p transfer '[ ~p, ~p, ~p, ~p ]' -p ",
-        [Url, Contract, From, To, Quantity, Memo]),
+    Creator = recorder:lookup(eos_main_account),
+    Cmd = lists:concat(["cleos -u ", Url, " system newaccount --stake-net '0 EOS' --stake-cpu '0 EOS' --buy-ram-kbytes 4 ",
+        Creator, " ", Account, " ", PublicKey, " ", PublicKey, " -j"]),
+    wallet_unlock(),
+    e_port:exec_json(Cmd).
+
+transfer(From, To, Symbol, Quantity, Memo) ->
+    Url = recorder:lookup(eos_url),
+    Amount = Quantity ++ " " ++ Symbol,
+    Chars =
+    case Symbol of
+        "EOS" ->
+            Temp = lists:concat(["cleos -u ~p transfer ", From, " ", To, " ~p ~p -p "]),
+            io_lib:format(Temp, [Url, Amount, Memo]);
+        _ ->
+            Contract = recorder:lookup(eos_contract),
+            io_lib:format("cleos -u ~p push action ~p transfer '[ ~p, ~p, ~p, ~p ]' -p ",
+                [Url, Contract, From, To, Amount, Memo])
+    end,
     Cmd = lists:flatten(Chars)++From++"@active -j",
+    lager:info(Cmd),
     wallet_unlock(),
     e_port:exec_json(Cmd).
 

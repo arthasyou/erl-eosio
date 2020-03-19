@@ -43,8 +43,12 @@ transfer(DataIn) ->
         <<"quantity">> := Quantity,
         <<"memo">> := Memo
     } = DataIn,
-    Currency = binary_to_list(Quantity) ++ " " ++ binary_to_list(Symbol),
-    case eosio:transfer(binary_to_list(From), binary_to_list(To), Currency, binary_to_list(Memo)) of
+    case eosio:transfer(
+        binary_to_list(From),
+        binary_to_list(To),
+        binary_to_list(Symbol),
+        binary_to_list(Quantity),
+        binary_to_list(Memo)) of
         error ->
             #{flag => fail, reason => <<"sys_err">>};
         Data ->
