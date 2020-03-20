@@ -49,18 +49,18 @@ create_account(Account) ->
     Url = recorder:lookup(eos_url),
     PublicKey = recorder:lookup(eos_public_key),
     Creator = recorder:lookup(eos_main_account),
-    Cmd = lists:concat(["cleos -u ", Url, " system newaccount --stake-net '0 EOS' --stake-cpu '0 EOS' --buy-ram-kbytes 4 ",
-        Creator, " ", Account, " ", PublicKey, " ", PublicKey, " -j"]),
+    Cmd = lists:concat(["cleos -u ", Url, " system newaccount --stake-net '0 EOS' --stake-cpu '0 EOS' --buy-ram-kbytes 3 ",
+        Creator, " ", Account, " ", PublicKey, " ", PublicKey]),
     wallet_unlock(),
-    e_port:exec_json(Cmd).
+    e_port:exec(Cmd).
 
 create_account_with_public_key(Account, PublicKey) ->
     Url = recorder:lookup(eos_url),
     Creator = recorder:lookup(eos_main_account),
-    Cmd = lists:concat(["cleos -u ", Url, " system newaccount --stake-net '0 EOS' --stake-cpu '0 EOS' --buy-ram-kbytes 4 ",
-        Creator, " ", Account, " ", PublicKey, " ", PublicKey, " -j"]),
+    Cmd = lists:concat(["cleos -u ", Url, " system newaccount --stake-net '0 EOS' --stake-cpu '0 EOS' --buy-ram-kbytes 3 ",
+        Creator, " ", Account, " ", PublicKey, " ", PublicKey]),
     wallet_unlock(),
-    e_port:exec_json(Cmd).
+    e_port:exec(Cmd).
 
 transfer(From, To, Symbol, Quantity, Memo) ->
     Url = recorder:lookup(eos_url),
