@@ -9,8 +9,6 @@
 -module(e_port).
 -author("ysx").
 
--include("error.hrl").
-
 %% ==================================================
 %% API
 %% ==================================================
@@ -48,7 +46,7 @@ get_data(Port, Sofar) ->
             receive
                 {'EXIT',  Port,  _} ->
                     ok
-            after 1 ->              % force context switch
+            after 1 ->
                 ok
             end,
             ExitCode =
@@ -60,23 +58,7 @@ get_data(Port, Sofar) ->
     end.
 
 format_error(Error) ->
-    {ok, ConnectErr} = re:compile("Failed to coonect to nodeos"),
-    {ok, NetErr} = re:compile("network usage limit imposed"),
-    {ok, BalanceErr} = re:compile("overdrawn balance"),
-    {ok, AccErr} = re:compile("account does not exist"),
-    {ok, CpuErr} = re:compile("CPU usage limit imposed"),
-    {ok, PrecErr} = re:compile("symbol precision mismatch"),
-    {ok, RamErr} = re:compile("insufficient ram"),
-
-    ErrorList = [
-        {?ERR_CONNECTION, ConnectErr},
-        {?ERR_NET, NetErr},
-        {?ERR_BALANCE, BalanceErr},
-        {?ERR_ACC, AccErr},
-        {?ERR_CPU, CpuErr},
-        {?ERR_PRECISION, PrecErr},
-        {?ERR_RAM, RamErr}],
-
+    ErrorList = recorder:lookup(eosio_error),
     check_error(Error, ErrorList).
 
 check_error(_Error, []) ->

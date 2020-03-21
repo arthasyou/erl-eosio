@@ -6,5 +6,5 @@ An OTP application
 Build
 -----
 
-    $ cp sys.config.bak sys.config
+    $ cp config/sys.config.bak config/sys.config
     $ rebar3 compile

@@ -8,6 +8,7 @@
 %%%-------------------------------------------------------------------
 -module(eos_sup).
 -author("ysx").
+-include("error.hrl").
 
 -behaviour(supervisor).
 
@@ -41,6 +42,7 @@ start_link() ->
 
 init([]) ->
     init_eosio(),
+    init_error(),
     SupFlags = #{strategy => one_for_one, intensity => 10, period => 10},
     ChildSpecs = [],
     {ok, {SupFlags, ChildSpecs}}.
@@ -54,5 +56,25 @@ init_eosio() ->
     lists:foreach(fun({Key, Val}) ->
         recorder:init(Key, Val)
     end, List).
+
+init_error() ->
+    {ok, ConnectErr} = re:compile("Failed to coonect to nodeos"),
+    {ok, NetErr} = re:compile("network usage limit imposed"),
+    {ok, BalanceErr} = re:compile("overdrawn balance"),
+    {ok, AccErr} = re:compile("account does not exist"),
+    {ok, CpuErr} = re:compile("CPU usage limit imposed"),
+    {ok, PrecErr} = re:compile("symbol precision mismatch"),
+    {ok, RamErr} = re:compile("insufficient ram"),
+
+    ErrorList = [
+        {?ERR_CONNECTION, ConnectErr},
+        {?ERR_NET, NetErr},
+        {?ERR_BALANCE, BalanceErr},
+        {?ERR_ACC, AccErr},
+        {?ERR_CPU, CpuErr},
+        {?ERR_PRECISION, PrecErr},
+        {?ERR_RAM, RamErr}],
+    recorder:init(eosio_error, ErrorList).
+
 
 
