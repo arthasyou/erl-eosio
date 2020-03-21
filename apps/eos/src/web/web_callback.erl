@@ -15,25 +15,18 @@
 -export([create_account/1, get_account/1]).
 -export([transfer/1, get_currency/1]).
 -export([delegate_bw/1, un_delegate_bw/1]).
+-export([buy_ram/1, sell_ram/1]).
+-export([list_bw/1]).
 
 create_account(DataIn) ->
-    lager:info("data:~p~n", [DataIn]),
     #{<<"account">> := Account} = DataIn,
-    case eosio:create_account(binary_to_list(Account)) of
-        error ->
-            #{flag => fail, reason => <<"sys_err">>};
-        Data ->
-            #{flag => success, data => Data}
-    end.
+    Reply = eosio:create_account(binary_to_list(Account)),
+    reply(Reply).
 
 get_account(DataIn) ->
     #{<<"account">> := Account} = DataIn,
-    case eosio:get_account(binary_to_list(Account)) of
-        error ->
-            #{flag => fail, reason => <<"sys_err">>};
-        Data ->
-            #{flag => success, data => Data}
-    end.
+    Reply = eosio:get_account(binary_to_list(Account)),
+    reply(Reply).
 
 transfer(DataIn) ->
     #{
@@ -43,29 +36,21 @@ transfer(DataIn) ->
         <<"quantity">> := Quantity,
         <<"memo">> := Memo
     } = DataIn,
-    case eosio:transfer(
+    Reply = eosio:transfer(
         binary_to_list(From),
         binary_to_list(To),
         binary_to_list(Symbol),
         binary_to_list(Quantity),
-        binary_to_list(Memo)) of
-        error ->
-            #{flag => fail, reason => <<"sys_err">>};
-        Data ->
-            #{flag => success, data => Data}
-    end.
+        binary_to_list(Memo)),
+    reply(Reply).
 
 get_currency(DataIn) ->
     #{
         <<"account">> := Account,
         <<"symbol">> := Symbol
     } = DataIn,
-    case eosio:get_currency(binary_to_list(Account), binary_to_list(Symbol)) of
-        error ->
-            #{flag => fail, reason => <<"sys_err">>};
-        Data ->
-            #{flag => success, data => Data}
-    end.
+    Reply = eosio:get_currency(binary_to_list(Account), binary_to_list(Symbol)),
+    reply(Reply).
 
 delegate_bw(DataIn) ->
     #{
@@ -73,12 +58,8 @@ delegate_bw(DataIn) ->
         <<"cpu">> := Cpu,
         <<"net">> := Net
     } = DataIn,
-    case eosio:delegate_bw(binary_to_list(Account), binary_to_list(Cpu), binary_to_list(Net)) of
-        error ->
-            #{flag => fail, reason => <<"sys_err">>};
-        Data ->
-            #{flag => success, data => Data}
-    end.
+    Reply = eosio:delegate_bw(binary_to_list(Account), binary_to_list(Cpu), binary_to_list(Net)),
+    reply(Reply).
 
 un_delegate_bw(DataIn) ->
     #{
@@ -86,14 +67,40 @@ un_delegate_bw(DataIn) ->
         <<"cpu">> := Cpu,
         <<"net">> := Net
     } = DataIn,
-    case eosio:un_delegate_bw(binary_to_list(Account), binary_to_list(Cpu), binary_to_list(Net)) of
-        error ->
-            #{flag => fail, reason => <<"sys_err">>};
-        Data ->
-            #{flag => success, data => Data}
-    end.
+    Reply = eosio:un_delegate_bw(binary_to_list(Account), binary_to_list(Cpu), binary_to_list(Net)),
+    reply(Reply).
 
+buy_ram(DataIn) ->
+    #{
+        <<"account">> := Account,
+        <<"bytes">> := Bytes
+    } = DataIn,
+    Reply = eosio:buy_ram(binary_to_list(Account), binary_to_list(Bytes)),
+    reply(Reply).
+
+sell_ram(DataIn) ->
+    #{
+        <<"account">> := Account,
+        <<"bytes">> := Bytes
+    } = DataIn,
+    Reply = eosio:sell_ram(binary_to_list(Account), binary_to_list(Bytes)),
+    reply(Reply).
+
+list_bw(DataIn) ->
+    #{
+        <<"account">> := Account
+    } = DataIn,
+    Reply = eosio:list_bw(binary_to_list(Account)),
+    reply(Reply).
 
 %% ==================================================
 %% Internal
 %% ==================================================
+reply(Reply) ->
+    case Reply of
+        {ok, Data} ->
+            #{flag => success, data => Data};
+        {error, Reason} ->
+            lager:info("Reson: ~p~n", [Reply]),
+            #{flag => fail, reason => Reason}
+    end.
