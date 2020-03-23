@@ -83,7 +83,7 @@ transfer(From, To, Symbol, Quantity, Memo) ->
     wallet_unlock(),
     case e_port:exec_json(Cmd) of
         {ok, Reply} ->
-            Data = format_transction_id(Reply),
+            Data = format_transaction_id(Reply),
             {ok, Data};
         Error ->
             Error
@@ -108,7 +108,7 @@ delegate_bw(Account, Cpu, Net) ->
     wallet_unlock(),
     case e_port:exec_json(Cmd) of
         {ok, Reply} ->
-            Data = format_transction_id(Reply),
+            Data = format_transaction_id(Reply),
             {ok, Data};
         Error ->
             Error
@@ -126,7 +126,7 @@ un_delegate_bw(Account, Cpu, Net) ->
     wallet_unlock(),
     case e_port:exec_json(Cmd) of
         {ok, Reply} ->
-            Data = format_transction_id(Reply),
+            Data = format_transaction_id(Reply),
             {ok, Data};
         Error ->
             Error
@@ -140,7 +140,7 @@ buy_ram(Account, Bytes) ->
     wallet_unlock(),
     case e_port:exec_json(Cmd) of
         {ok, Reply} ->
-            Data = format_transction_id(Reply),
+            Data = format_transaction_id(Reply),
             {ok, Data};
         Error ->
             Error
@@ -153,7 +153,7 @@ sell_ram(Account, Bytes) ->
     wallet_unlock(),
     case e_port:exec_json(Cmd) of
         {ok, Reply} ->
-            Data = format_transction_id(Reply),
+            Data = format_transaction_id(Reply),
             {ok, Data};
         Error ->
             Error
@@ -173,7 +173,7 @@ get_transaction(TransactionID) ->
     wallet_unlock(),
     case e_port:exec_json(Cmd) of
         {ok, Reply} ->
-            Data = format_transction_reply(Reply),
+            Data = format_transaction_reply(Reply),
             {ok, Data};
         Error ->
             Error
@@ -186,11 +186,12 @@ get_transaction(TransactionID) ->
 %% Internal
 %% ==================================================
 
-format_transction_id(Reply) ->
+format_transaction_id(Reply) ->
+    transaction,
     #{<<"transaction_id">> := TransactionID} = Reply,
     #{<<"transaction_id">> => TransactionID}.
 
-format_transction_reply(Reply) ->
+format_transaction_reply(Reply) ->
     #{
         <<"block_num">> := BlockNum,
         <<"traces">> := Traces
