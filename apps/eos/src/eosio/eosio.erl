@@ -54,7 +54,7 @@ create_account(Account) ->
     Cmd = lists:concat(["cleos -u ", Url, " system newaccount --stake-net '0 EOS' --stake-cpu '0 EOS' --buy-ram-kbytes 3 ",
         Creator, " ", Account, " ", PublicKey, " ", PublicKey]),
     wallet_unlock(),
-    e_port:exec(Cmd).
+    e_port:exec_json(Cmd).
 
 
 create_account_with_public_key(Account, PublicKey) ->
@@ -63,7 +63,7 @@ create_account_with_public_key(Account, PublicKey) ->
     Cmd = lists:concat(["cleos -u ", Url, " system newaccount --stake-net '0 EOS' --stake-cpu '0 EOS' --buy-ram-kbytes 3 ",
         Creator, " ", Account, " ", PublicKey, " ", PublicKey]),
     wallet_unlock(),
-    e_port:exec(Cmd).
+    e_port:exec_json(Cmd).
 
 
 transfer(From, To, Symbol, Quantity, Memo) ->

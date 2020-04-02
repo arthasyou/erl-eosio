@@ -58,9 +58,9 @@ init_eosio() ->
     end, List).
 
 init_error() ->
-    {ok, ConnectErr} = re:compile("Failed to coonect to nodeos"),
+    {ok, ConnectErr} = re:compile("Failed to connect to nodeos"),
     {ok, NetErr} = re:compile("network usage limit imposed"),
-    {ok, BalanceErr} = re:compile("overdrawn balance"),
+    {ok, BalanceErr} = re:compile("balance"),
     {ok, AccErr} = re:compile("account does not exist"),
     {ok, CpuErr} = re:compile("CPU usage limit imposed"),
     {ok, PrecErr} = re:compile("symbol precision mismatch"),
