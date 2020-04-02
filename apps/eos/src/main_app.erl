@@ -15,7 +15,7 @@
 %%====================================================================
 
 start(_StartType, _StartArgs) ->
-%%    web:start(),
+    web:start(),
     main_sup:start_link().
 
 
