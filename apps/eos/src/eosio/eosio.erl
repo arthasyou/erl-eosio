@@ -15,9 +15,9 @@
 -export([wallet_unlock/0]).
 -export([get_account/1, create_account/1, create_account_with_public_key/2]).
 -export([transfer/5, get_currency/2]).
--export([delegate_bw/3, un_delegate_bw/3]).
+-export([delegate_bw/3, un_delegate_bw/3, list_bw/1]).
 -export([buy_ram/2, sell_ram/2]).
--export([list_bw/1, get_transaction/1]).
+-export([get_transaction/1]).
 
 
 wallet_unlock() ->
@@ -134,6 +134,13 @@ un_delegate_bw(Account, Cpu, Net) ->
     end.
 
 
+list_bw(Account) ->
+    Url = recorder:lookup(eos_url),
+    Cmd = lists:concat(["cleos -u ", Url, " system listbw ", Account, " -j"]),
+    wallet_unlock(),
+    e_port:exec_json(Cmd).
+
+
 buy_ram(Account, Bytes) ->
     Url = recorder:lookup(eos_url),
     MainAccount = recorder:lookup(eos_main_account),
@@ -159,13 +166,6 @@ sell_ram(Account, Bytes) ->
         Error ->
             Error
     end.
-
-
-list_bw(Account) ->
-    Url = recorder:lookup(eos_url),
-    Cmd = lists:concat(["cleos -u ", Url, " system listbw ", Account, " -j"]),
-    wallet_unlock(),
-    e_port:exec_json(Cmd).
 
 
 get_transaction(TransactionID) ->
