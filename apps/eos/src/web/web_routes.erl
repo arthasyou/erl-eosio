@@ -28,6 +28,14 @@ routing(Path, DataIn) ->
             web_callback:delegate_bw(DataIn);
         <<"/un_delegate_bw">> ->
             web_callback:un_delegate_bw(DataIn);
+        <<"/get_transaction">> ->
+            web_callback:get_transaction(DataIn);
+        <<"/buy_ram">> ->
+            web_callback:buy_ram(DataIn);
+        <<"/sell_ram">> ->
+            web_callback:sell_ram(DataIn);
+        <<"/list_bw">> ->
+            web_callback:list_bw(DataIn);
         _ ->
             other()
     end.

@@ -17,6 +17,7 @@
 -export([delegate_bw/1, un_delegate_bw/1]).
 -export([buy_ram/1, sell_ram/1]).
 -export([list_bw/1]).
+-export([get_transaction/1]).
 
 create_account(DataIn) ->
     #{<<"account">> := Account} = DataIn,
@@ -91,6 +92,13 @@ list_bw(DataIn) ->
         <<"account">> := Account
     } = DataIn,
     Reply = eosio:list_bw(binary_to_list(Account)),
+    reply(Reply).
+
+get_transaction(DataIn) ->
+    #{
+        <<"id">> := ID
+    } = DataIn,
+    Reply = eosio:get_transaction(binary_to_list(ID)),
     reply(Reply).
 
 %% ==================================================
