@@ -62,10 +62,6 @@ content_types_provided(Req, State) ->
     ], Req, State}.
 
 html(Req, State) ->
-    HasBody = cowboy_req:has_body(Req),
-    lager:info("HasBody~p~n", [HasBody]),
-    AA = cowboy_req:parse_qs(Req),
-    lager:error("Headers~p~n", [AA]),
     Body = <<"{\"rest\": \"Hello World!\"}">>,
     {Body, Req, State}.
 

@@ -65,6 +65,8 @@ init_error() ->
     {ok, CpuErr} = re:compile("CPU usage limit imposed"),
     {ok, PrecErr} = re:compile("symbol precision mismatch"),
     {ok, RamErr} = re:compile("insufficient ram"),
+    {ok, NameErr} = re:compile("name is already taken"),
+
 
     ErrorList = [
         {?ERR_CONNECTION, ConnectErr},
@@ -73,7 +75,9 @@ init_error() ->
         {?ERR_ACC, AccErr},
         {?ERR_CPU, CpuErr},
         {?ERR_PRECISION, PrecErr},
-        {?ERR_RAM, RamErr}],
+        {?ERR_RAM, RamErr},
+        {?ERR_NAME, NameErr}
+    ],
     recorder:init(eosio_error, ErrorList).
 
 
