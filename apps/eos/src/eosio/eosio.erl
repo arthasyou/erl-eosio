@@ -188,7 +188,6 @@ get_transaction(TransactionID) ->
 %% ==================================================
 
 format_transaction_id(Reply) ->
-    transaction,
     #{<<"transaction_id">> := TransactionID} = Reply,
     #{<<"transaction_id">> => TransactionID}.
 
