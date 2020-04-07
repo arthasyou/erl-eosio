@@ -57,6 +57,7 @@ create_account_with_public_key(Account, PublicKey) ->
     Creator = recorder:lookup(eos_main_account),
     Cmd = lists:concat(["cleos -u ", Url, " system newaccount --stake-net '0 EOS' --stake-cpu '0 EOS' --buy-ram-kbytes 3 ",
         Creator, " ", Account, " ", PublicKey, " ", PublicKey, " -j"]),
+%%          Creator, " ", Account, " ", PublicKey, " ", PublicKey]),
     wallet_unlock(),
     case e_port:exec_json(Cmd) of
         {ok, Reply} ->
@@ -65,6 +66,7 @@ create_account_with_public_key(Account, PublicKey) ->
         Error ->
             Error
     end.
+%%    e_port:exec(Cmd).
 
 
 transfer(From, To, Symbol, Quantity, Memo) ->
@@ -192,14 +194,20 @@ format_transaction_id(Reply) ->
     #{<<"transaction_id">> => TransactionID}.
 
 format_transaction_reply(Reply) ->
-    #{
-        <<"block_num">> := BlockNum,
-        <<"traces">> := Traces
-    } = Reply,
-    [#{<<"act">> := Act}|_] = Traces,
-    #{<<"data">> := Data, <<"name">> := Name} = Act,
-    #{
-        <<"block_num">> => BlockNum,
-        <<"action">> => Data,
-        <<"name">> => Name
-    }.
+    case Reply of
+        #{<<"err_code">> := ErrCode} ->
+            {error, ErrCode};
+        _ ->
+            #{
+                <<"block_num">> := BlockNum,
+                <<"traces">> := Traces
+            } = Reply,
+            [#{<<"act">> := Act}|_] = Traces,
+            #{<<"data">> := Data, <<"name">> := Name} = Act,
+            #{
+                <<"block_num">> => BlockNum,
+                <<"action">> => Data,
+                <<"name">> => Name
+            }
+    end.
+
