@@ -19,5 +19,6 @@
 -define(ERR_ACC, 70006). %% EOS账号不存在
 -define(ERR_PRECISION, 70006). %% 货币数量最小保留4位小数
 -define(ERR_NAME, 70007). %% 名字以存在
+-define(ERR_TRANSACTION, 70008). %% transaction_id查不到
 
 -endif.

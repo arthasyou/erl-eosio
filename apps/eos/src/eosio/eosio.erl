@@ -8,6 +8,7 @@
 %%%-------------------------------------------------------------------
 -module(eosio).
 -author("ysx").
+-include("error.hrl").
 
 %% ==================================================
 %% API
@@ -176,8 +177,7 @@ get_transaction(TransactionID) ->
     wallet_unlock(),
     case e_port:exec_json(Cmd) of
         {ok, Reply} ->
-            Data = format_transaction_reply(Reply),
-            {ok, Data};
+            format_transaction_reply(Reply);
         Error ->
             Error
     end.
@@ -195,8 +195,8 @@ format_transaction_id(Reply) ->
 
 format_transaction_reply(Reply) ->
     case Reply of
-        #{<<"err_code">> := ErrCode} ->
-            {error, ErrCode};
+        #{<<"err_code">> := _ErrCode} ->
+            {error, ?ERR_TRANSACTION};
         _ ->
             #{
                 <<"block_num">> := BlockNum,
@@ -204,10 +204,11 @@ format_transaction_reply(Reply) ->
             } = Reply,
             [#{<<"act">> := Act}|_] = Traces,
             #{<<"data">> := Data, <<"name">> := Name} = Act,
-            #{
+            {ok, #{
                 <<"block_num">> => BlockNum,
                 <<"action">> => Data,
                 <<"name">> => Name
-            }
+            }}
+
     end.
 
