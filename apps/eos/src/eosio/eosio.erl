@@ -219,7 +219,9 @@ format_account(Data) ->
     #{
         <<"cpu_limit">> := CpuLimit,
         <<"net_limit">> := NetLimit,
-        <<"total_resources">> := TotalResources
+        <<"total_resources">> := TotalResources,
+        <<"ram_usage">> := RamUsage,
+        <<"ram_quota">> := RamQuota
     } = Data,
     Assets =
     case maps:find(<<"core_liquid_balance">>, Data) of
@@ -232,6 +234,8 @@ format_account(Data) ->
         <<"cpu_limit">> => CpuLimit,
         <<"net_limit">> => NetLimit,
         <<"total_resources">> => TotalResources,
+        <<"ram_usage">> => RamUsage,
+        <<"ram_quota">> => RamQuota,
         <<"assets">> => Assets
     }.
 
