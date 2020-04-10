@@ -36,6 +36,8 @@ routing(Path, DataIn) ->
             web_callback:sell_ram(DataIn);
         <<"/list_bw">> ->
             web_callback:list_bw(DataIn);
+        <<"/get_account_and_assets">> ->
+            web_callback:get_account_and_assets(DataIn);        
         _ ->
             other()
     end.

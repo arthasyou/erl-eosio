@@ -20,7 +20,6 @@
 -export([buy_ram/2, sell_ram/2]).
 -export([get_transaction/1]).
 
-
 wallet_unlock() ->
     case wallet_list() of
         {0, Str} ->
@@ -45,7 +44,14 @@ wallet_list() ->
 get_account(Account) ->
     Url = recorder:lookup(eos_url),
     Cmd = lists:concat(["cleos -u ", Url, " get account ", Account, " -j"]),
-    e_port:exec_json(Cmd).
+    % e_port:exec_json(Cmd).
+    case e_port:exec_json(Cmd) of
+        {ok, Reply} ->
+            Data = format_account(Reply),
+            {ok, Data};
+        Error ->
+            Error
+    end.
 
 
 create_account(Account) ->
@@ -182,9 +188,6 @@ get_transaction(TransactionID) ->
             Error
     end.
 
-
-
-
 %% ==================================================
 %% Internal
 %% ==================================================
@@ -211,4 +214,24 @@ format_transaction_reply(Reply) ->
             }}
 
     end.
+
+format_account(Data) ->
+    #{
+        <<"cpu_limit">> := CpuLimit,
+        <<"net_limit">> := NetLimit,
+        <<"total_resources">> := TotalResources
+    } = Data,
+    Assets =
+    case maps:find(<<"core_liquid_balance">>, Data) of
+        {ok, V} ->
+            [V];
+        _ ->
+            []
+    end,
+    #{
+        <<"cpu_limit">> => CpuLimit,
+        <<"net_limit">> => NetLimit,
+        <<"total_resources">> => TotalResources,
+        <<"assets">> => Assets
+    }.
 

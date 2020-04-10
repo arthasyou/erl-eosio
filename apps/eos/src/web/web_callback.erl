@@ -18,6 +18,7 @@
 -export([buy_ram/1, sell_ram/1]).
 -export([list_bw/1]).
 -export([get_transaction/1]).
+-export([get_account_and_assets/1]).
 
 create_account(DataIn) ->
     #{<<"account">> := Account} = DataIn,
@@ -100,6 +101,28 @@ get_transaction(DataIn) ->
     } = DataIn,
     Reply = eosio:get_transaction(binary_to_list(ID)),
     reply(Reply).
+
+get_account_and_assets(DataIn) ->
+    #{
+        <<"account">> := AccountBin
+    } = DataIn,
+    Account = binary_to_list(AccountBin),
+
+    Reply =
+    case eosio:get_account(Account) of
+        {ok, R1} ->
+            case eosio:get_currency(Account, "DC") of
+                {ok, R2} ->
+                    #{<<"assets">> := Assets} = R1,
+                    {ok, R1#{<<"assets">> => Assets++R2}};
+                Error ->
+                    Error
+            end;
+        Error ->
+            Error
+    end,
+    reply(Reply).
+ 
 
 %% ==================================================
 %% Internal
