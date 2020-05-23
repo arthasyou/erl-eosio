@@ -111,7 +111,7 @@ get_account_and_assets(DataIn) ->
     Reply =
     case eosio:get_account(Account) of
         {ok, R1} ->
-            case eosio:get_currency(Account, "DC") of
+            case eosio:get_currency(Account, recorder:lookup(eos_symbol)) of
                 {ok, R2} ->
                     #{<<"assets">> := Assets} = R1,
                     {ok, R1#{<<"assets">> => Assets++R2}};

@@ -75,7 +75,8 @@
       {eos_main_account, "ancient55555"},
       {eos_public_key, "EOS5YHyucDzKf2U5oPafGWBYBSR5ZTPLnnaNmdjj6nhnV324asP7u"},
       {eos_url, "http://jungle2.cryptolions.io:8888"},
-      {eos_query_url, "https://api.eosflare.io"}
+      {eos_query_url, "https://api.eosflare.io"},
+      {eos_symbol, "DC"}
     ]},
 
     {http_port, 8080}
