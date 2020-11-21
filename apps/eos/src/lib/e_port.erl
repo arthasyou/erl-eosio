@@ -58,6 +58,7 @@ get_data(Port, Sofar) ->
     end.
 
 format_error(Error) ->
+    lager:error("format_error:~p", [Error]),
     ErrorList = recorder:lookup(eosio_error),
     check_error(Error, ErrorList).
 
